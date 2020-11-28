@@ -7,13 +7,13 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
-public class RestController {
+public class restController {
 	
-	public String templateGenerator() throws IOException
+	public String templateGenerator(String userId) throws IOException
 	{
 		GetMap  rest = new GetMap();
-		Map<String, Object> objectType = rest.getJsonType();
-		Map<String, ArrayList<Object>> objectValue = rest.getJSONdata();
+		Map<String, Object> objectType = rest.getJsonType(userId);
+		Map<String, ArrayList<Object>> objectValue = rest.getJSONdata(userId);
 		
 	    String data = "";
 	    try {

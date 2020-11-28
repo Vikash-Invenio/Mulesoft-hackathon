@@ -1,41 +1,55 @@
 package com.invenio.util.chatbot;
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
+import java.util.HashMap;
 public class CloudHubObjectGenerator {
-
-    public String getaccount() throws IOException {
-		URL url = new URL("https://anypoint.mulesoft.com/accounts/login?username=devesh_gaur1&password=Yardnvsi1");
+	static HashMap<String,String> UserAccessToken = new HashMap<>();
+	public static String url1="";
+	public String login(String userName, String password,String userId) throws IOException
+	{
+		URL url = new URL("https://anypoint.mulesoft.com/accounts/login?username="+userName +"&password="+password);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Accept", "application/json");
+        System.out.println(conn.getResponseCode());
+        //conn.getResponseCode()
+       if(conn.getResponseCode()==200)
+       {
         BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-        String output,access_token = null,org_id=null,id=null;
+        String output,access_token = null;
         while ((output = br.readLine()) != null) {
            // System.out.println(output);
             
             if(output.contains("access_token")) {
                 access_token = output.substring(19, (output.length()-2));
-                break;
+               // break;
             }
+            System.out.println(output);
         }
-       // System.out.println("Access_token: "+access_token);
-        
-        ////////////////////////////////////////////////////////////
-        
-        url = new URL("https://anypoint.mulesoft.com/accounts/api/me");
+        UserAccessToken.put(userId, access_token);
+        return "Authentication sucessful";
+	}
+       
+    	   return "Authentication failed";
+       
+	}
+
+    public String getaccount(String userId) throws IOException {
+	
+        String output, org_id=null,id=null;;
+       // String access_token = UserAccessToken.get(userName);
+      //  System.out.println(UserAccessToken.get(userId));
+        URL url = new URL("https://anypoint.mulesoft.com/accounts/api/me");
         HttpURLConnection conn1 = (HttpURLConnection) url.openConnection();
         conn1.setRequestMethod("GET");
+        //System.out.println(conn1.hashCode());
         conn1.setRequestProperty("Accept", "application/json");
-        conn1.setRequestProperty("Authorization", "Bearer "+access_token);
+        conn1.setRequestProperty("Authorization", "Bearer "+UserAccessToken.get(userId));
         BufferedReader br1 = new BufferedReader(new InputStreamReader((conn1.getInputStream())));
         StringBuffer sb= new StringBuffer();
         while ((output = br1.readLine()) != null) {
@@ -44,6 +58,7 @@ public class CloudHubObjectGenerator {
                 break;
             }
         }
+        //System.out.println("hello");
         
         ///////////////////////////////////////////////////////////////////////
         
@@ -51,7 +66,7 @@ public class CloudHubObjectGenerator {
         HttpURLConnection conn2 = (HttpURLConnection) url.openConnection();
         conn2.setRequestMethod("GET");
         conn2.setRequestProperty("Accept", "application/json");
-        conn2.setRequestProperty("Authorization", "Bearer "+access_token);
+        conn2.setRequestProperty("Authorization", "Bearer "+UserAccessToken.get(userId));
         BufferedReader br2 = new BufferedReader(new InputStreamReader((conn2.getInputStream())));
         while ((output = br2.readLine()) != null) {
         	if(output.contains("id")) {
@@ -62,12 +77,14 @@ public class CloudHubObjectGenerator {
         
         /////////////////////////////////////////////////////////////////////////
         
-        url = new URL("https://anypoint.mulesoft.com/cloudhub/api/v2/applications");
+        //url = new URL("https://anypoint.mulesoft.com/cloudhub/api/v2/applications");
+        url = new URL(url1);
         HttpURLConnection conn3 = (HttpURLConnection) url.openConnection();
         conn3.setRequestMethod("GET");
         conn3.setRequestProperty("Accept", "application/json");
-        conn3.setRequestProperty("Authorization", "Bearer "+access_token);
+        conn3.setRequestProperty("Authorization", "Bearer "+UserAccessToken.get(userId));
         conn3.setRequestProperty("X-ANYPNT-ENV-ID", id);
+        conn3.setRequestProperty("X-ANYPNT-ORG-ID", org_id);
         BufferedReader br3 = new BufferedReader(new InputStreamReader((conn3.getInputStream())));
         
         while ((output = br3.readLine()) != null) {
@@ -77,7 +94,7 @@ public class CloudHubObjectGenerator {
         String sb1 =sb.toString(); 
 		 if(sb1.charAt(2)=='[') 
 			 return sb1.substring(3, sb.length()-1);
-		 
+		 //System.out.println(sb.toString());
         return sb.toString();
 	}
 	/*
@@ -93,7 +110,7 @@ public class CloudHubObjectGenerator {
 	 * 
 	 * }
 	 */
-}
+    }
 
 
 

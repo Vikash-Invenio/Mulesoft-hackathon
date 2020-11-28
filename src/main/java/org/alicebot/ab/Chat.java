@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 public class Chat {
 	private static final Logger log = LoggerFactory.getLogger(Chat.class);
     public Bot bot;
+    public String userId = null;
     public String customerId = MagicStrings.unknown_customer_id;
     public History<History> thatHistory= new History<History>("that");
     public History<String> requestHistory=new History<String>("request");

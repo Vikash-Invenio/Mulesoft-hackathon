@@ -14,12 +14,12 @@ import org.json.JSONObject;
 
 public class GetMap {
 
-	public Map<String, ArrayList<Object>> getJSONdata() throws MalformedURLException, IOException
+	public Map<String, ArrayList<Object>> getJSONdata(String userId) throws MalformedURLException, IOException
 	{
 		
 		
 		CloudHubObjectGenerator gen = new CloudHubObjectGenerator();
-        String string_to_Be_Parsed = gen.getaccount();
+        String string_to_Be_Parsed = gen.getaccount(userId);
 		JSONObject jsonObj;
 		Map<String, ArrayList<Object>> result2 = null;
 		try {
@@ -40,10 +40,10 @@ public class GetMap {
 		
 	}
 	
-	public Map<String, Object> getJsonType() throws MalformedURLException, IOException {
+	public Map<String, Object> getJsonType(String userId) throws MalformedURLException, IOException {
 		
 		CloudHubObjectGenerator gen = new CloudHubObjectGenerator();
-        String string_to_Be_Parsed = gen.getaccount();
+        String string_to_Be_Parsed = gen.getaccount(userId);
         Map<String, Object> type=null;
 		JSONObject jsonObj;
 		try {

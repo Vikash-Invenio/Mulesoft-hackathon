@@ -45,7 +45,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.invenio.util.chatbot.GetMap;
-import com.invenio.util.chatbot.RestController;
+import com.invenio.util.chatbot.restController;
 
 
 public class Sraix {
@@ -58,16 +58,24 @@ public class Sraix {
     public static String sraix(Chat chatSession, String input, String defaultResponse, String hint, String host, String botid, String apiKey, String limit) {
         String response;
         String[] key= input.split(" " );
-        Set<String> pattern=null;
-        try {
-        	pattern = (new GetMap()).getJsonType().keySet();
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
+        Set<String> pattern=new HashSet<>();
+        File fw=new File("keys.txt");
+        Scanner myReader=null;
+		try {
+			myReader = new Scanner(fw);
+		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+        while (myReader.hasNextLine()) 
+          pattern.add(myReader.nextLine());
+        
+		/*
+		 * try { pattern = (new GetMap()).getJsonType().keySet();
+		 * //System.out.print(pattern); } catch (MalformedURLException e1) { // TODO
+		 * Auto-generated catch block e1.printStackTrace(); } catch (IOException e1) {
+		 * // TODO Auto-generated catch block e1.printStackTrace(); }
+		 */
 			 Boolean flag=false;
 			 String temp=null;
 			 for(String st:key)
@@ -80,10 +88,12 @@ public class Sraix {
 			 }
 		        if(flag)
 		        {
-					RestController rest = new RestController();
+		        	if(chatSession.userId==null)
+		        		return "Authenticate first";
+					restController rest = new restController();
 					  String template =""; 
 		           try {
-		        	   template = rest.templateGenerator();
+		        	   template = rest.templateGenerator(chatSession.userId);
 					   Node root = DomUtils.parseString(template);
 					String language = MagicStrings.default_language;
 		            if (root.hasAttributes()) {
